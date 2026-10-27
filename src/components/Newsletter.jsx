@@ -25,11 +25,12 @@ export default function Newsletter() {
     const messages = {
       network: 'You could not be subscribed because the connection failed. Check your connection and try again.',
       invalid: 'That email address could not be accepted. Check it and try again.',
+      limited: 'Sign-ups are busy right now. Please try again in a few minutes.',
       unavailable: 'Subscriptions are temporarily unavailable. Please try again later.',
     };
     setState({
       status: 'error',
-      message: messages[result.reason] || 'The subscription service did not respond. Try again in a few minutes.',
+      message: (result.reason === 'limited' && result.message) || messages[result.reason] || 'The subscription service did not respond. Try again in a few minutes.',
     });
   }
 

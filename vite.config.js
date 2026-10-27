@@ -2,6 +2,7 @@ import { copyFileSync, existsSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import { withSecurityHeaders } from './scripts/csp.mjs';
 
 // The site is served from the root of www.officialbbo.com. The public site is
 // one page that navigates with #anchors; the team's admin panel lives at /admin.
@@ -11,7 +12,7 @@ import react from '@vitejs/plugin-react';
 // Absolute URLs (canonical, Open Graph, sitemap) come from VITE_SITE_URL, which
 // the GitHub Actions workflow sets automatically (and switches to your custom
 // domain when public/CNAME exists).
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const siteUrl = (env.VITE_SITE_URL || 'https://gabgab11.github.io/bbo-official-website/').replace(/\/?$/, '/');
 
@@ -23,7 +24,14 @@ export default defineConfig(({ mode }) => {
       react(),
       {
         name: 'bbo-site-files',
-        transformIndexHtml: (html) => html.replaceAll('__SITE_URL__', siteUrl),
+        transformIndexHtml: {
+          order: 'post',
+          handler: (html) => {
+            const page = html.replaceAll('__SITE_URL__', siteUrl);
+            // Content-Security-Policy and referrer policy (build only; the dev server injects its own inline scripts).
+            return command === 'build' ? withSecurityHeaders(page, env.VITE_SUPABASE_URL) : page;
+          },
+        },
         generateBundle() {
           const today = new Date().toISOString().slice(0, 10);
           this.emitFile({
@@ -51,6 +59,7 @@ export default defineConfig(({ mode }) => {
     ],
     build: {
       target: 'es2020',
+      sourcemap: false, // never publish the original source code
     },
   };
 });

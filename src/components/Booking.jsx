@@ -19,6 +19,7 @@ function validate(v) {
 const messages = {
   network: 'Your request could not be sent because the connection failed. Check your internet connection and try again.',
   invalid: 'Some details could not be accepted. Check each field and try again.',
+  limited: 'We have already received several requests from this email address today. We will be in touch soon.',
   server: 'The booking service did not respond. Try again in a few minutes.',
   unavailable: 'Online booking is temporarily unavailable. Please send BBO a direct message on Instagram.',
 };
@@ -69,7 +70,7 @@ export default function Booking() {
       setStatus('success');
       setValues(empty);
     } else {
-      setFailure(messages[result.reason] || messages.server);
+      setFailure((result.reason === 'limited' && result.message) || messages[result.reason] || messages.server);
       setStatus('error');
     }
     requestAnimationFrame(() => statusRef.current?.focus());
