@@ -78,6 +78,18 @@ export const videos = [
 
 export const youtubeChannel = 'https://www.youtube.com/@Officialbbo';
 
+/** How long BBO is asked to minister (booking form). */
+export const durations = ['30 minutes', '1 hour', '2 hours', '4 hours', '7 hours'];
+
+/** Countries offered on the booking form: Nigeria first, then A to Z. */
+export const countries = [
+  'Nigeria',
+  'Australia', 'Belgium', 'Benin', 'Botswana', 'Cameroon', 'Canada', "Côte d'Ivoire", 'Finland', 'France',
+  'Germany', 'Ghana', 'Ireland', 'Italy', 'Kenya', 'Liberia', 'Netherlands', 'New Zealand', 'Qatar', 'Rwanda',
+  'Sierra Leone', 'South Africa', 'Spain', 'Tanzania', 'Togo', 'Uganda', 'United Arab Emirates', 'United Kingdom',
+  'United States', 'Zambia',
+];
+
 export const eventTypes = [
   'Church service',
   'Worship night or concert',

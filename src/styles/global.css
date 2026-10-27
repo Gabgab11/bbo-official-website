@@ -474,6 +474,8 @@ a.player__facade { display: block; }
 .footer__col small { color: var(--stone); margin-left: 0.35rem; }
 .footer__bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-top: clamp(3rem, 6vw, 5rem); padding-top: 1.5rem; border-top: 1px solid var(--line-dark); color: var(--stone); font-size: 0.9rem; }
 .footer__bottom a { color: var(--stone); }
+.footer__credit { margin-left: 0.5rem; padding-left: 0.75rem; border-left: 1px solid var(--line-dark); white-space: nowrap; }
+@media (max-width: 560px) { .footer__credit { display: block; margin: 0.35rem 0 0; padding: 0; border: 0; } }
 .footer__links { display: inline-flex; gap: 1.5rem; flex-wrap: wrap; }
 .footer__linkbtn { background: none; border: 0; padding: 0; font: inherit; color: var(--stone); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .footer__linkbtn:hover { color: var(--ivory); }

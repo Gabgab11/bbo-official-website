@@ -39,7 +39,16 @@ function BookingDetail({ b, onChange, onBin }) {
         <div><dt><Icon.mail /> Email</dt><dd><a className="a-link" href={`mailto:${b.email}`}>{b.email}</a></dd></div>
         {b.phone && <div><dt><Icon.phone /> Phone</dt><dd><a className="a-link" href={`tel:${b.phone.replace(/[^\d+]/g, '')}`}>{b.phone}</a></dd></div>}
         <div><dt><Icon.calendar /> Date</dt><dd>{b.event_date ? formatDate(b.event_date) : 'Not given'}</dd></div>
-        <div><dt><Icon.pin /> Venue</dt><dd>{b.location || 'Not given'}</dd></div>
+        {b.duration && <div><dt><Icon.clock /> Length</dt><dd>{b.duration}</dd></div>}
+        {b.venue ? (
+          <>
+            <div><dt><Icon.pin /> Venue</dt><dd>{b.venue}</dd></div>
+            <div><dt><Icon.pin /> City</dt><dd>{b.city}</dd></div>
+            <div><dt><Icon.pin /> Country</dt><dd>{b.country}</dd></div>
+          </>
+        ) : (
+          <div><dt><Icon.pin /> Venue</dt><dd>{b.location || 'Not given'}</dd></div>
+        )}
       </dl>
       <div className="a-booking__message">
         <h4>About the event</h4>
@@ -93,7 +102,7 @@ export default function Bookings() {
     // The request being worked on stays visible even after its status changes.
     return (data || []).filter((b) =>
       (b.id === open || filter === 'all' || b.status === filter) &&
-      (!q || `${b.first_name} ${b.last_name} ${b.email} ${b.location || ''} ${b.event_type}`.toLowerCase().includes(q)),
+      (!q || `${b.first_name} ${b.last_name} ${b.email} ${b.location || ''} ${b.country || ''} ${b.event_type}`.toLowerCase().includes(q)),
     );
   }, [data, filter, query, open]);
 
@@ -123,7 +132,7 @@ export default function Bookings() {
         <label className="a-search">
           <Icon.search />
           <span className="a-sr">Search bookings</span>
-          <input type="search" placeholder="Search name, email or city" value={query} onChange={(e) => setQuery(e.target.value)} />
+          <input type="search" placeholder="Search name, email, city or country" value={query} onChange={(e) => setQuery(e.target.value)} />
         </label>
       </div>
 

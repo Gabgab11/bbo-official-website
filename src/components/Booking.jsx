@@ -1,10 +1,19 @@
 import { useRef, useState } from 'react';
-import { eventTypes, socials } from '../data/content.js';
+import { countries, durations, eventTypes, socials } from '../data/content.js';
 import { EMAIL_RE, formsConfigured, submitBooking } from '../lib/forms.js';
 import { track } from '../lib/analytics.js';
 import { useSiteContent } from '../lib/siteContent.jsx';
 
-const empty = { first_name: '', last_name: '', email: '', phone: '', event_type: '', event_date: '', location: '', details: '', website: '' };
+const empty = { first_name: '', last_name: '', email: '', phone: '', event_type: '', event_date: '', duration: '', country: '', city: '', venue: '', details: '', website: '' };
+
+const PHONE_RE = /^\+?[0-9 ()-]{7,25}$/;
+const OTHER_COUNTRY = 'Other (please say in the details)';
+
+/** Today's date as YYYY-MM-DD in the visitor's own time zone. */
+const today = () => {
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+};
 
 function validate(v) {
   const e = {};
@@ -12,7 +21,15 @@ function validate(v) {
   if (!v.last_name.trim()) e.last_name = 'Enter your last name.';
   if (!v.email.trim()) e.email = 'Enter your email address.';
   else if (!EMAIL_RE.test(v.email.trim())) e.email = 'Enter an email address like name@example.com.';
+  if (!v.phone.trim()) e.phone = 'Enter a phone number.';
+  else if (!PHONE_RE.test(v.phone.trim())) e.phone = 'Enter a phone number using digits, with the country code, e.g. +234 803 000 0000.';
   if (!v.event_type) e.event_type = 'Choose the type of event.';
+  if (!v.event_date) e.event_date = 'Choose the date of the event.';
+  else if (v.event_date < today()) e.event_date = 'Choose a date that hasn’t passed.';
+  if (!v.duration) e.duration = 'Choose how long BBO is to minister.';
+  if (!v.country) e.country = 'Choose the country.';
+  if (!v.city.trim()) e.city = 'Enter the city.';
+  if (!v.venue.trim()) e.venue = 'Enter the venue.';
   if (v.details.trim().length < 10) e.details = 'Tell us a little more about the event (at least 10 characters).';
   return e;
 }
@@ -60,15 +77,18 @@ export default function Booking() {
       first_name: values.first_name.trim(),
       last_name: values.last_name.trim(),
       email: values.email.trim(),
-      phone: values.phone.trim() || null,
+      phone: values.phone.trim(),
       event_type: values.event_type,
-      event_date: values.event_date || null,
-      location: values.location.trim() || null,
+      event_date: values.event_date,
+      duration: values.duration,
+      country: values.country === OTHER_COUNTRY ? 'Other' : values.country,
+      city: values.city.trim(),
+      venue: values.venue.trim(),
       details: values.details.trim(),
     };
     const result = await submitBooking(row);
     if (result.ok) {
-      track('generate_lead', { form: 'booking', event_type: row.event_type });
+      track('generate_lead', { form: 'booking', event_type: row.event_type, duration: row.duration, country: row.country });
       setStatus('success');
       setValues(empty);
     } else {
@@ -95,7 +115,7 @@ export default function Booking() {
           <h2 className="section-title" id="booking-title">{booking.title}</h2>
           <p className="lede">{booking.lede}</p>
           <ul className="booking__notes">
-            <li>Include the date, city and expected audience if you know them.</li>
+            <li>Tell us the expected audience and anything special about the programme.</li>
             <li>For international events, allow extra time for travel arrangements.</li>
             <li>
               Prefer a direct message? Reach the team on{' '}
@@ -136,8 +156,9 @@ export default function Booking() {
               <FieldError name="email" />
             </div>
             <div className="field">
-              <label htmlFor="book-phone">Phone <span className="optional">(optional)</span></label>
-              <input {...field('phone')} type="tel" autoComplete="tel" maxLength={40} />
+              <label htmlFor="book-phone">Phone</label>
+              <input {...field('phone')} type="tel" autoComplete="tel" inputMode="tel" maxLength={25} placeholder="+234 803 000 0000" required />
+              <FieldError name="phone" />
             </div>
             <div className="field">
               <label htmlFor="book-event_type">Type of event</label>
@@ -148,12 +169,36 @@ export default function Booking() {
               <FieldError name="event_type" />
             </div>
             <div className="field">
-              <label htmlFor="book-event_date">Event date <span className="optional">(optional)</span></label>
-              <input {...field('event_date')} type="date" />
+              <label htmlFor="book-event_date">Event date</label>
+              <input {...field('event_date')} type="date" min={today()} required />
+              <FieldError name="event_date" />
             </div>
-            <div className="field field--full">
-              <label htmlFor="book-location">Venue and city <span className="optional">(optional)</span></label>
-              <input {...field('location')} autoComplete="address-level2" maxLength={160} />
+            <div className="field">
+              <label htmlFor="book-duration">Length of ministration</label>
+              <select {...field('duration')} required>
+                <option value="">Choose one</option>
+                {durations.map((d) => <option key={d} value={d}>{d}</option>)}
+              </select>
+              <FieldError name="duration" />
+            </div>
+            <div className="field">
+              <label htmlFor="book-country">Country</label>
+              <select {...field('country')} autoComplete="country-name" required>
+                <option value="">Choose a country</option>
+                {countries.map((c) => <option key={c} value={c}>{c}</option>)}
+                <option value={OTHER_COUNTRY}>{OTHER_COUNTRY}</option>
+              </select>
+              <FieldError name="country" />
+            </div>
+            <div className="field">
+              <label htmlFor="book-city">City</label>
+              <input {...field('city')} autoComplete="address-level2" maxLength={80} required />
+              <FieldError name="city" />
+            </div>
+            <div className="field">
+              <label htmlFor="book-venue">Venue</label>
+              <input {...field('venue')} maxLength={160} placeholder="Church, hall or address" required />
+              <FieldError name="venue" />
             </div>
             <div className="field field--full">
               <label htmlFor="book-details">Tell us about the event</label>
