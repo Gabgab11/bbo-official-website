@@ -13,7 +13,7 @@ Built with React and Vite, hosted free on GitHub Pages, and deployed automatical
 | About | Biography, ministry story, a press quote (ThisDay, 2024) and key facts |
 | Music | *Renewed Faith* with a live Spotify player, streaming links and a list of releases with official store links |
 | Videos | A player with a playlist of 12 videos: the 9 from the old site plus 3 found on YouTube. Videos load only when played (privacy-enhanced `youtube-nocookie.com`) |
-| Gallery | 11 original photographs with a keyboard-accessible full-screen viewer |
+| Gallery | 12 original photographs with a keyboard-accessible full-screen viewer |
 | Booking | Event request form that saves to a Supabase database |
 | Newsletter | Email sign-up with consent, saved to the same database |
 | Footer | Navigation, streaming platforms, social profiles and booking link |
@@ -85,6 +85,8 @@ If these are missing the site still builds, and the forms show a clear "temporar
 ## Photos
 
 The original photographs are recovered from the Wix media library. The deploy workflow runs `npm run media:pull` before every build, which downloads them into `public/media/` so the live site serves them itself. If a download ever fails, that photo falls back to its original Wix URL rather than breaking.
+
+The same step trims the white frame that is baked into the two portrait files, and builds `og-share.jpg`, the 1200×630 image shown when the site is shared on WhatsApp, Facebook or X (black ground, "BBO" in Bodoni Moda, the black-and-white portrait). The code is in `scripts/share-image.mjs`.
 
 To make the site fully independent of Wix before you close the Wix account, run this once on your own computer and commit the result:
 

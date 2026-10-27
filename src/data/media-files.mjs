@@ -3,11 +3,12 @@
 
 export const photos = {
   hero: { file: 'ab7e7d_5cdf3f8596614503aad1a14ba318908f~mv2.jpg', w: 738, h: 923, alt: 'BBO, gospel music minister' },
-  portrait: { file: 'ab7e7d_76c28687ba34400a81a25dad29d88e35~mv2.jpg', w: 567, h: 703, alt: 'Portrait of BBO' },
-  portraitAlt: { file: 'ab7e7d_22f0357b7be446a29f4612dad1008b39~mv2.jpg', w: 281, h: 346, alt: 'Portrait of BBO' },
-  og: { file: 'ab7e7d_2ff32248fd2d4f5089b79657d1877fb9~mv2.png', w: 2500, h: 1330, alt: 'BBO' },
+  // Both portraits have a white border baked into the file; `trim` removes it when pulled.
+  portrait: { file: 'ab7e7d_22f0357b7be446a29f4612dad1008b39~mv2.jpg', w: 800, h: 985, trim: true, alt: 'Black-and-white portrait of BBO in a white shirt' },
+  portraitRed: { file: 'ab7e7d_76c28687ba34400a81a25dad29d88e35~mv2.jpg', w: 800, h: 991, trim: true, alt: 'BBO in traditional attire, lit in red' },
 };
 
+// The red-lit portrait closes the gallery.
 export const gallery = [
   { file: 'ab7e7d_12ab11c2dc364f38901d43f505eb9a31~mv2.jpg', w: 980, h: 502 },
   { file: 'ab7e7d_3c1a95e1fc1a4e2a9cab933dd1b144a1~mv2.jpg', w: 648, h: 432 },
@@ -20,7 +21,8 @@ export const gallery = [
   { file: 'ab7e7d_1c1defb8467143319b8a8e8916e70a99~mv2.jpg', w: 860, h: 502 },
   { file: 'ab7e7d_75b1fa8c94d9461e9044722395fae470~mv2.jpg', w: 720, h: 502 },
   { file: 'ab7e7d_cd65a113d0c84f75a1b74ab1189a03e8~mv2.jpg', w: 864, h: 502 },
-].map((p, i, all) => ({ ...p, alt: `Photograph of BBO (${i + 1} of ${all.length})` }));
+  photos.portraitRed,
+].map((p, i, all) => ({ ...p, alt: `${p.alt || 'Photograph of BBO'} (${i + 1} of ${all.length})` }));
 
 export const WIDTHS = [800, 1600];
 
