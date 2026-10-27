@@ -11,7 +11,7 @@ export default function Videos() {
 
   const choose = (i) => {
     setIndex(i);
-    setPlaying(true);
+    setPlaying(videos[i].embed !== false);
     document.getElementById('player')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
 
@@ -28,7 +28,14 @@ export default function Videos() {
         <div className="theater">
           <div className="theater__stage">
             <div className="player" id="player">
-              {playing ? (
+              {video.embed === false ? (
+                <a className="player__facade" href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noopener noreferrer">
+                  <img src={thumb(video.id)} alt="" width="480" height="360" loading="lazy" decoding="async" />
+                  <span className="player__play"><PlayIcon /></span>
+                  <span className="player__note">Plays on YouTube</span>
+                  <span className="visually-hidden">Play {video.title} on YouTube (opens in a new tab)</span>
+                </a>
+              ) : playing ? (
                 <iframe
                   key={video.id}
                   src={`https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`}

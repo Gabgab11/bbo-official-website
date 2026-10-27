@@ -59,11 +59,13 @@ export const releases = [
 
 // The first nine are the videos from the original website; the rest were found
 // on YouTube and match BBO's verified releases and collaborations.
+// `embed: false` marks videos whose owner has turned off playback on other
+// websites; the player sends those to YouTube instead.
 export const videos = [
   { id: 'brPR3pCSzXM', title: 'Orun Si (Ephphatha)', credit: 'With Oladosu Twins, recorded live' },
   { id: 't-SpU2bRuRY', title: 'ORO', credit: 'Featuring Tope Alabi' },
-  { id: 'JT0rkZd29ck', title: 'Most High', credit: 'Official video' },
-  { id: 'juDiB3odYIM', title: 'My God', credit: 'Official video' },
+  { id: 'JT0rkZd29ck', title: 'Most High', credit: 'Official video', embed: false },
+  { id: 'juDiB3odYIM', title: 'My God', credit: 'Official video', embed: false },
   { id: '4K4uEgE1vuk', title: 'Sound of Mercy', credit: 'Featuring Woli Arole' },
   { id: '4g5W9CODBGo', title: 'Iranlowo', credit: 'Official video' },
   { id: 'zQ0miY3NVL4', title: 'I Believe in You', credit: 'Official video' },

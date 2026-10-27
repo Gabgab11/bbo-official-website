@@ -294,6 +294,8 @@ p:last-child { margin-bottom: 0; }
 }
 .player__facade:hover .player__play, .player__facade:focus-visible .player__play { background: var(--champagne); color: var(--black); }
 .player__play svg { width: 34%; margin-left: 6%; }
+a.player__facade { display: block; }
+.player__note { position: absolute; left: 50%; top: calc(50% + clamp(44px, 6vw, 64px)); translate: -50% 0; font-size: 0.9rem; color: var(--ivory); background: rgb(0 0 0 / 0.6); padding: 0.3rem 0.8rem; border-radius: 999px; white-space: nowrap; }
 .now-playing { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; padding-top: 1.25rem; }
 .now-playing h3 { font-size: var(--step-2); }
 .now-playing p { margin: 0.25rem 0 0; color: var(--stone); }
