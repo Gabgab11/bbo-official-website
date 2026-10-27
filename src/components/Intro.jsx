@@ -76,6 +76,7 @@ export default function Intro() {
   const [show, setShow] = useState(() => document.documentElement.classList.contains('intro'));
   const [leaving, setLeaving] = useState(false);
   const canvasRef = useRef(null);
+  const nameRef = useRef(null);
   const finished = useRef(false);
 
   const finish = useCallback(() => {
@@ -160,8 +161,9 @@ export default function Intro() {
           }
         }
 
-        // The lettering resolves where the notes gathered.
+        // The lettering resolves where the notes gathered, then the full name appears.
         const letters = clamp((t - T_LETTERS + 250) / 700);
+        if (letters > 0.5) nameRef.current?.classList.add('is-visible');
         if (letters > 0) {
           ctx.save();
           ctx.globalAlpha = letters;
@@ -194,7 +196,7 @@ export default function Intro() {
   return (
     <div className={`intro${leaving ? ' is-leaving' : ''}`} onClick={finish} role="presentation">
       <canvas ref={canvasRef} className="intro__canvas" aria-hidden="true" />
-      <p className="intro__name">Bakare Boluwatife Oluwatobi</p>
+      <p className="intro__name" ref={nameRef}>Bakare Boluwatife Oluwatobi</p>
       <button type="button" className="intro__skip" onClick={finish}>Skip intro</button>
     </div>
   );
