@@ -9,7 +9,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 const GOLD = '#c9b37e';
 const GOLD_SOFT = '#e3d4ab';
 const IVORY = '#f5f0e6';
-const FONT = '"Bodoni Moda", "Bodoni 72", Didot, Georgia, serif';
+const FONT = '"Archivo", "Arial Black", Arial, sans-serif';
+const FONT_STYLE = 'expanded 900'; // bold and broad, matching the home page
 
 const T_GATHER = 2400; // each note's journey
 const T_LETTERS = 3900; // lettering appears as the notes dissolve
@@ -45,7 +46,7 @@ function letterPoints(width, height, fontSize, target) {
   c.width = width;
   c.height = height;
   const g = c.getContext('2d', { willReadFrequently: true });
-  g.font = `600 ${fontSize}px ${FONT}`;
+  g.font = `${FONT_STYLE} ${fontSize}px ${FONT}`;
   g.textAlign = 'center';
   g.textBaseline = 'alphabetic';
   const m = g.measureText('BBO');
@@ -98,7 +99,7 @@ export default function Intro() {
     const start = async () => {
       // Wait briefly for the display font so the letters match the site.
       await Promise.race([
-        document.fonts?.load(`600 200px ${FONT}`).catch(() => {}),
+        document.fonts?.load(`${FONT_STYLE} 200px ${FONT}`).catch(() => {}),
         new Promise((r) => setTimeout(r, 900)),
       ]);
       if (cancelled) return;
@@ -110,7 +111,7 @@ export default function Intro() {
       canvas.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const fontSize = Math.min(W * 0.4, H * 0.34, 380);
+      const fontSize = Math.min(W * 0.26, H * 0.3, 300);
       const target = W < 600 ? 95 : 150;
       const { pts, step, baseline } = letterPoints(W, H, fontSize, target);
       const u = step * 0.95;
@@ -169,7 +170,7 @@ export default function Intro() {
           ctx.save();
           ctx.globalAlpha = letters;
           ctx.fillStyle = IVORY;
-          ctx.font = `600 ${fontSize}px ${FONT}`;
+          ctx.font = `${FONT_STYLE} ${fontSize}px ${FONT}`;
           ctx.textAlign = 'center';
           ctx.fillText('BBO', W / 2, baseline);
           ctx.restore();
