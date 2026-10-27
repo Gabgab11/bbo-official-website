@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { featured, releases, streaming } from '../data/content.js';
+import { streaming, featured as baseFeatured } from '../data/content.js';
+import { useSiteContent } from '../lib/siteContent.jsx';
 
 const MOBILE_LIMIT = 5;
 
@@ -11,6 +12,7 @@ const External = ({ children }) => (
 );
 
 export default function Music() {
+  const { featured, releases } = useSiteContent();
   const [all, setAll] = useState(false);
   return (
     <section className="section on-light music" id="music" aria-labelledby="music-title">
@@ -40,7 +42,7 @@ export default function Music() {
           <div className="music__embed">
             <iframe
               title="BBO on Spotify"
-              src={featured.spotifyEmbed}
+              src={baseFeatured.spotifyEmbed}
               loading="lazy"
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
             />
@@ -56,7 +58,7 @@ export default function Music() {
           </div>
           <ul className={`release-list${all ? '' : ' is-collapsed'}`} id="release-list">
             {releases.map((r, i) => (
-              <li className={`release${i >= MOBILE_LIMIT ? ' release--extra' : ''}`} key={r.title}>
+              <li className={`release${i >= MOBILE_LIMIT ? ' release--extra' : ''}`} key={r.id || r.title}>
                 <div className="release__title">
                   {r.title}
                   {r.credit && <small>{r.credit}</small>}
@@ -69,9 +71,11 @@ export default function Music() {
               </li>
             ))}
           </ul>
+          {releases.length > MOBILE_LIMIT && (
           <button type="button" className="read-more read-more--releases" aria-expanded={all} aria-controls="release-list" onClick={() => setAll((v) => !v)}>
             {all ? 'Show fewer releases' : `Show all ${releases.length} releases`}
           </button>
+          )}
         </div>
       </div>
     </section>

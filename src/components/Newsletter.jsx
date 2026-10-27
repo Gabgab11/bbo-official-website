@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { EMAIL_RE, formsConfigured, subscribe } from '../lib/forms.js';
+import { useSiteContent } from '../lib/siteContent.jsx';
 
 export default function Newsletter() {
+  const { newsletter } = useSiteContent();
   const [email, setEmail] = useState('');
   const [consent, setConsent] = useState(false);
   const [state, setState] = useState({ status: 'idle', message: '', field: null });
@@ -37,8 +39,8 @@ export default function Newsletter() {
     <section className="section newsletter" aria-labelledby="newsletter-title">
       <div className="container newsletter__grid">
         <div>
-          <h2 className="newsletter__title" id="newsletter-title">Stay close to the ministry</h2>
-          <p className="lede">New releases, upcoming ministrations and live recordings, sent occasionally by email.</p>
+          <h2 className="newsletter__title" id="newsletter-title">{newsletter.title}</h2>
+          <p className="lede">{newsletter.lede}</p>
         </div>
         <form className="newsletter__form" onSubmit={onSubmit} noValidate>
           <div className="newsletter__row">

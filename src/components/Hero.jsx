@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import Photo from './Photo.jsx';
-import { artist, featured } from '../data/content.js';
-import { heroSlides, photoKey } from '../data/media.js';
+import { photoKey } from '../data/media.js';
+import { useSiteContent } from '../lib/siteContent.jsx';
 import { HeadphonesIcon, PlayIcon } from './Icons.jsx';
 import { useIsMobile, usePageVisible, useReducedMotion } from '../hooks/useMedia.js';
 
 const INTERVAL = 10000;
 
 export default function Hero() {
+  const { hero, featured, heroSlides } = useSiteContent();
   const [active, setActive] = useState(0);
   const [loaded, setLoaded] = useState(() => new Set([0]));
   const mobile = useIsMobile();
@@ -19,13 +20,16 @@ export default function Hero() {
     if (reduced || !visible) return undefined;
     const id = setInterval(() => setActive((i) => (i + 1) % heroSlides.length), INTERVAL);
     return () => clearInterval(id);
-  }, [reduced, visible]);
+  }, [reduced, visible, heroSlides.length]);
+
+  // Live content may bring a different number of photos.
+  useEffect(() => { setActive(0); setLoaded(new Set([0])); }, [heroSlides]);
 
   // Load each photo just before it is needed, so the first visit stays light.
   useEffect(() => {
     const next = (active + 1) % heroSlides.length;
     setLoaded((s) => (s.has(next) ? s : new Set(s).add(next)));
-  }, [active]);
+  }, [active, heroSlides.length]);
 
   return (
     <section className="hero" id="top" aria-labelledby="hero-name">
@@ -51,8 +55,8 @@ export default function Hero() {
           <span aria-hidden="true">O</span>
         </h1>
         <div className="hero__fade">
-          <p className="hero__fullname">{artist.fullName}</p>
-          <p className="hero__headline">{artist.headline}</p>
+          <p className="hero__fullname">{hero.fullName}</p>
+          <p className="hero__headline">{hero.headline}</p>
           <div className="hero__actions">
             <a className="btn btn--gold" href="#music"><HeadphonesIcon /> Listen</a>
             <a className="btn" href="#videos"><PlayIcon /> Watch</a>

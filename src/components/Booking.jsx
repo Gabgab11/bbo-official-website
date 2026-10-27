@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { eventTypes, socials } from '../data/content.js';
 import { EMAIL_RE, formsConfigured, submitBooking } from '../lib/forms.js';
+import { useSiteContent } from '../lib/siteContent.jsx';
 
 const empty = { first_name: '', last_name: '', email: '', phone: '', event_type: '', event_date: '', location: '', details: '', website: '' };
 
@@ -23,6 +24,7 @@ const messages = {
 };
 
 export default function Booking() {
+  const { booking } = useSiteContent();
   const [values, setValues] = useState(empty);
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | sending | success | error
@@ -87,8 +89,8 @@ export default function Booking() {
     <section className="section on-light booking" id="booking" aria-labelledby="booking-title">
       <div className="container booking__grid">
         <div className="booking__intro">
-          <h2 className="section-title" id="booking-title">Invite BBO to minister</h2>
-          <p className="lede">Tell us about your church service, concert, conference or celebration. Every request is read by BBO’s team, who reply by email.</p>
+          <h2 className="section-title" id="booking-title">{booking.title}</h2>
+          <p className="lede">{booking.lede}</p>
           <ul className="booking__notes">
             <li>Include the date, city and expected audience if you know them.</li>
             <li>For international events, allow extra time for travel arrangements.</li>

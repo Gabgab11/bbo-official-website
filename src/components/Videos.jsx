@@ -1,19 +1,23 @@
 import { useState } from 'react';
-import { videos, youtubeChannel } from '../data/content.js';
+import { youtubeChannel } from '../data/content.js';
+import { useSiteContent } from '../lib/siteContent.jsx';
 import { PlayIcon } from './Icons.jsx';
 
 const thumb = (id, q = 'hqdefault') => `https://i.ytimg.com/vi/${id}/${q}.jpg`;
 
 export default function Videos() {
+  const { videos } = useSiteContent();
   const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const video = videos[index];
+  const video = videos[Math.min(index, videos.length - 1)];
 
   const choose = (i) => {
     setIndex(i);
     setPlaying(videos[i].embed !== false);
     document.getElementById('player')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
+
+  if (!video) return null;
 
   return (
     <section className="section videos" id="videos" aria-labelledby="videos-title">
@@ -65,7 +69,7 @@ export default function Videos() {
 
           <ul className="playlist" aria-label="Video playlist">
             {videos.map((v, i) => (
-              <li key={v.id}>
+              <li key={v.key || v.id}>
                 <button type="button" onClick={() => choose(i)} aria-current={i === index ? 'true' : undefined}>
                   <img src={thumb(v.id, 'mqdefault')} alt="" width="320" height="180" loading="lazy" decoding="async" />
                   <span>

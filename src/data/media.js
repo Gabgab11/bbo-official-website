@@ -5,14 +5,20 @@
 
 import manifest from './media-manifest.json';
 import { WIDTHS, wixUrl, localName } from './media-files.mjs';
+import { mediaUrl } from '../lib/supabase.js';
 
-export { photos, gallery, heroSlides, photoKey } from './media-files.mjs';
+export { photos, gallery, heroSlides } from './media-files.mjs';
 
 const base = () => `${import.meta.env.BASE_URL}media/`;
 
-/** Returns { src, srcSet } for a photo. */
+/** Stable key for a photo of any kind. */
+export const photoKey = (p) => p.id || p.file || p.local || p.upload;
+
+/** Returns { src, srcSet } for a photo: uploaded via the admin panel, committed, or from Wix. */
 export function photoSources(photo) {
-  const url = photo.local
+  const url = photo.upload
+    ? (w) => mediaUrl(`${photo.upload}-${w}.jpg`)
+    : photo.local
     ? (w) => `${base()}${photo.local}-${w}.jpg`
     : manifest[photo.file]
       ? (w) => `${base()}${localName(photo.file, w)}`

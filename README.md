@@ -19,6 +19,42 @@ Built with React and Vite, hosted free on GitHub Pages, and deployed automatical
 | Newsletter | Email sign-up with consent, saved to the same database |
 | Footer | Navigation, streaming platforms, social profiles and booking link |
 
+## Admin panel (for BBO's team)
+
+**Address:** https://gabgab11.github.io/bbo-official-website/#admin. It is not linked from the website, and only invited team members can sign in.
+
+What the team can do, from a phone or a computer:
+
+| Section | What it does |
+| --- | --- |
+| Overview | New booking requests, subscriber and photo counts, quick actions |
+| Bookings | Every booking request; mark it New, Contacted, Confirmed or Declined; private team notes; reply by email or call |
+| Photos | Upload photos (resized and compressed automatically), choose which rotate on the home page, reorder the gallery, set the focus point so faces stay in view, add descriptions |
+| Site text | Home page headline, featured release, About story and quote, booking and newsletter introductions |
+| Music & videos | Add, edit, reorder or remove YouTube videos and releases |
+| Subscribers | Newsletter sign-ups; download the list as a spreadsheet file (CSV) |
+| Recently deleted | Everything removed waits here for 30 days and can be restored; after that it is erased automatically |
+| Team | Owners invite people with one-time links, change roles, create password reset links, remove members |
+| Your account | Change your name and password |
+
+**Roles.** *Editors* can change everything on the website. *Owners* can also manage the team.
+
+**Inviting someone.** Team → Invite someone → Create invite link, then send the link privately (WhatsApp or email buttons are provided). The link works once and expires after 7 days. The person opens it, enters their name, team email and a password, and is signed in.
+
+**Forgotten passwords.** An owner opens Team → Reset password next to the person, and sends them the link (valid 2 days, works once). If the only owner is locked out, the developer can create a new owner invite from the Supabase SQL editor:
+
+```sql
+-- Run in Supabase → SQL editor; copy the code it returns.
+with c as (select translate(encode(extensions.gen_random_bytes(18), 'base64'), '+/=', '-_') as code),
+     ins as (insert into public.admin_invites (code_hash, role, note) select private.hash_code(code), 'owner', 'Recovery' from c)
+select code from c;
+-- Link: https://gabgab11.github.io/bbo-official-website/#admin/join/<code>
+```
+
+**How it works.** The website reads its text, photos, releases and videos from Supabase when it loads, and keeps the content it was built with as a fallback, so it still shows everything if Supabase is ever unreachable. Uploaded photos are stored in the `site-media` storage bucket. Database rules (Row Level Security, see `supabase/migrations/`) allow visitors to read published content and send forms, and nothing else; only signed-in team members can change content. The admin code is loaded only when someone opens `#admin`, so visitors never download it.
+
+**Recently deleted.** Removing anything sets a `deleted_at` date instead of erasing it. A nightly job (`bbo-purge-recently-deleted`, 02:17 UTC) erases items older than 30 days; uploaded photo files past 30 days are erased the next time a team member opens the admin panel.
+
 ## Project structure
 
 ```
@@ -33,7 +69,9 @@ Built with React and Vite, hosted free on GitHub Pages, and deployed automatical
 │   ├── lib/forms.js               Sends form data to Supabase
 │   ├── components/                Header, Hero, About, Music, Videos, Gallery, Booking, Newsletter, Footer
 │   └── styles/global.css          Design tokens and all styles
-├── supabase/migrations/           Database schema and security rules for the forms
+├── src/admin/                     Admin panel (pages/, session.js, api.js, image.js, admin.css)
+├── src/lib/siteContent.jsx        Loads live content from Supabase, with built-in fallback
+├── supabase/migrations/           Database schema, security rules and initial content
 └── vite.config.js                 Relative base path, sitemap/robots/404 generation
 ```
 

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Photo from './Photo.jsx';
-import { gallery, photoKey } from '../data/media.js';
+import { photoKey } from '../data/media.js';
+import { useSiteContent } from '../lib/siteContent.jsx';
 import { socials } from '../data/content.js';
 import { ArrowLeft, ArrowRight, CloseIcon, PauseIcon, PlayIcon } from './Icons.jsx';
 import { usePageVisible, useReducedMotion } from '../hooks/useMedia.js';
@@ -9,6 +10,8 @@ const INTERVAL = 6000;
 const SWIPE = 40; // px
 
 export default function Gallery() {
+  const { gallery: rawGallery } = useSiteContent();
+  const gallery = rawGallery.map((p, i, all) => ({ ...p, alt: `${p.alt || 'BBO ministering'} (${i + 1} of ${all.length})` }));
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false); // chosen by the visitor
   const [hovering, setHovering] = useState(false);
@@ -25,6 +28,9 @@ export default function Gallery() {
   const count = gallery.length;
 
   const go = useCallback((d) => setIndex((i) => (i + d + count) % count), [count]);
+
+  // Live content may bring a different number of photos.
+  useEffect(() => { if (index >= count) setIndex(0); }, [count, index]);
 
   // Only run the slideshow while it is on screen.
   useEffect(() => {
