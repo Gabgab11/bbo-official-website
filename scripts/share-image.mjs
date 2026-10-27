@@ -21,7 +21,31 @@ async function googleFont(family, axes) {
   const { tmpdir } = await import('node:os');
   const file = join(await mkdtemp(join(tmpdir(), 'bbo-font-')), `${family}.ttf`);
   await writeFile(file, buf);
-  return file;
+  return { file, name: fontName(buf) };
+}
+
+/** Reads the family and style a font file declares (OpenType 'name' table). */
+export function fontName(buf) {
+  const numTables = buf.readUInt16BE(4);
+  for (let i = 0; i < numTables; i++) {
+    const rec = 12 + i * 16;
+    if (buf.toString('latin1', rec, rec + 4) !== 'name') continue;
+    const table = buf.readUInt32BE(rec + 8);
+    const count = buf.readUInt16BE(table + 2);
+    const strings = table + buf.readUInt16BE(table + 4);
+    const names = {};
+    for (let j = 0; j < count; j++) {
+      const r = table + 6 + j * 12;
+      const [platform, , , id, len, off] = [0, 2, 4, 6, 8, 10].map((o) => buf.readUInt16BE(r + o));
+      if (platform !== 3 || names[id]) continue; // Windows, UTF-16BE
+      const raw = buf.subarray(strings + off, strings + off + len);
+      names[id] = Buffer.from(raw).swap16().toString('utf16le');
+    }
+    const familyName = names[16] || names[1];
+    const style = names[17] || names[2] || '';
+    return style && style !== 'Regular' ? `${familyName} ${style}` : familyName;
+  }
+  return null;
 }
 
 async function textLayer(sharp, { text, font, fontfile, width, color }) {
@@ -32,10 +56,12 @@ async function textLayer(sharp, { text, font, fontfile, width, color }) {
 export async function makeShareImage(sharp, portraitBuffer) {
   if (!sharp) throw new Error('sharp is required');
 
-  const [display, sans] = await Promise.all([
+  const [display, italic, sans] = await Promise.all([
     googleFont('Bodoni+Moda', 'opsz,wght@96,600').catch(() => null),
+    googleFont('Bodoni+Moda', 'ital,opsz,wght@1,28,400').catch(() => null),
     googleFont('Hanken+Grotesk', 'wght@500').catch(() => null),
   ]);
+  console.log(`Share image fonts: ${[display, italic, sans].map((f) => f?.name || 'fallback').join(', ')}`);
 
   const photoW = 520;
   const photo = await sharp(portraitBuffer)
@@ -50,22 +76,22 @@ export async function makeShareImage(sharp, portraitBuffer) {
 
   const name = await textLayer(sharp, {
     text: 'BBO',
-    font: display ? 'Bodoni Moda SemiBold 230' : 'DejaVu Serif Bold 200',
-    fontfile: display || undefined,
+    font: display?.name ? `${display.name} 230` : 'DejaVu Serif Bold 200',
+    fontfile: display?.file,
     width: 700,
     color: IVORY,
   });
   const sub = await textLayer(sharp, {
     text: 'Gospel music minister, worship leader and songwriter',
-    font: sans ? 'Hanken Grotesk Medium 30' : 'DejaVu Sans 28',
-    fontfile: sans || undefined,
+    font: sans?.name ? `${sans.name} 30` : 'DejaVu Sans 28',
+    fontfile: sans?.file,
     width: 600,
     color: GOLD,
   });
   const fullName = await textLayer(sharp, {
-    text: '<i>Bakare Boluwatife Oluwatobi</i>',
-    font: display ? 'Bodoni Moda 38' : 'DejaVu Serif 34',
-    fontfile: display || undefined,
+    text: italic ? 'Bakare Boluwatife Oluwatobi' : '<i>Bakare Boluwatife Oluwatobi</i>',
+    font: italic?.name ? `${italic.name} 38` : 'DejaVu Serif Italic 34',
+    fontfile: italic?.file,
     width: 640,
     color: IVORY,
   });
