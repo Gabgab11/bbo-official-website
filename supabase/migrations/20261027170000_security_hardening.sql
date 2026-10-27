@@ -7,7 +7,8 @@
 --                  from everyone together per 10 minutes;
 --      newsletter: at most 60 new sign-ups per 10 minutes.
 
-revoke select (updated_by) on public.site_content from anon;
+revoke select on public.site_content from anon;
+grant select (key, value, updated_at) on public.site_content to anon;
 
 create index if not exists booking_inquiries_email_created_idx
   on public.booking_inquiries (lower(email), created_at desc);

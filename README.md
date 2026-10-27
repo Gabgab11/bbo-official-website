@@ -124,6 +124,12 @@ If these are missing the site still builds, and the forms show a clear "temporar
 
 **Spam protection.** The booking form has a hidden honeypot field and ignores submissions made within three seconds of loading; the database enforces field lengths and email format.
 
+**Security hardening.**
+- **Form limits.** The database limits the forms (`supabase/migrations/20261027170000_security_hardening.sql`): at most 3 booking requests per email address per day, at most 20 from everyone per 10 minutes, and at most 60 newsletter sign-ups per 10 minutes.
+- **Strict page rules.** Every page carries a Content-Security-Policy (`scripts/csp.mjs`): only the site's own scripts run, and connections are only allowed to Supabase. Images, fonts and embeds may come only from the hosts the site uses.
+- **No framing, no source maps.** The site refuses to be shown inside another site's frame, and the build publishes no source maps.
+- **Accounts.** Public sign-up is turned off in Supabase Auth; team accounts are created only through invite links.
+
 ## Photos
 
 The original photographs are recovered from the Wix media library. The deploy workflow runs `npm run media:pull` before every build, which downloads them into `public/media/` so the live site serves them itself. If a download ever fails, that photo falls back to its original Wix URL rather than breaking.
