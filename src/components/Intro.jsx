@@ -2,19 +2,19 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 // Welcome screen: music notes drift in from all sides and gather into the
 // letters "BBO", resolve into the lettering itself, then the screen lifts away.
-// Shown once per browser session; skipped entirely for reduced motion
-// (index.html decides before the page paints, so there is no flash).
+// Plays on every visit, on every device, for about six seconds (tap or any key
+// skips it). Visitors who prefer reduced motion see the notes fade into place
+// instead of flying in. index.html covers the page before it paints, so there is no flash.
 
 const GOLD = '#c9b37e';
 const GOLD_SOFT = '#e3d4ab';
 const IVORY = '#f5f0e6';
 const FONT = '"Bodoni Moda", "Bodoni 72", Didot, Georgia, serif';
-const SEEN_KEY = 'bbo-intro-seen';
 
-const T_GATHER = 1500; // notes travelling
-const T_LETTERS = 2350; // lettering appears
-const T_LEAVE = 3500; // screen lifts away
-const T_DONE = 4300;
+const T_GATHER = 2400; // each note's journey
+const T_LETTERS = 3900; // lettering appears as the notes dissolve
+const T_LEAVE = 5900; // screen lifts away
+const T_DONE = 6700;
 
 const ease = (t) => 1 - (1 - t) ** 3;
 const clamp = (v) => Math.min(1, Math.max(0, v));
@@ -82,7 +82,6 @@ export default function Intro() {
   const finish = useCallback(() => {
     if (finished.current) return;
     finished.current = true;
-    try { sessionStorage.setItem(SEEN_KEY, '1'); } catch { /* storage may be blocked */ }
     document.documentElement.classList.remove('intro');
     setLeaving(true);
     setTimeout(() => setShow(false), T_DONE - T_LEAVE);
@@ -116,17 +115,19 @@ export default function Intro() {
       const { pts, step, baseline } = letterPoints(W, H, fontSize, target);
       const u = step * 0.95;
 
+      // Reduced motion: notes fade in where they belong instead of flying in.
+      const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const notes = pts.map((p) => {
         const angle = Math.random() * Math.PI * 2;
         const dist = Math.max(W, H) * (0.55 + Math.random() * 0.5);
         return {
           tx: p.x,
           ty: p.y + u * 0.3,
-          sx: W / 2 + Math.cos(angle) * dist,
-          sy: H / 2 + Math.sin(angle) * dist,
-          rot: (Math.random() - 0.5) * 2.4,
-          swirl: (Math.random() - 0.5) * 160,
-          delay: (p.x / W) * 380 + Math.random() * 260,
+          sx: calm ? p.x : W / 2 + Math.cos(angle) * dist,
+          sy: calm ? p.y + u * 0.3 : H / 2 + Math.sin(angle) * dist,
+          rot: calm ? 0 : (Math.random() - 0.5) * 2.4,
+          swirl: calm ? 0 : (Math.random() - 0.5) * 160,
+          delay: (p.x / W) * 550 + Math.random() * 350,
           kind: Math.random() < 0.45 ? 1 : Math.random() < 0.75 ? 0 : 2,
           color: Math.random() < 0.18 ? GOLD_SOFT : GOLD,
           scale: 0.85 + Math.random() * 0.3,
@@ -140,7 +141,7 @@ export default function Intro() {
         ctx.clearRect(0, 0, W, H);
 
         // Notes travel in on gently curved paths, then settle with a faint sway.
-        const notesFade = 1 - clamp((t - T_LETTERS) / 600);
+        const notesFade = 1 - clamp((t - T_LETTERS) / 900);
         if (notesFade > 0) {
           for (const n of notes) {
             const p = ease(clamp((t - n.delay) / T_GATHER));
@@ -162,7 +163,7 @@ export default function Intro() {
         }
 
         // The lettering resolves where the notes gathered, then the full name appears.
-        const letters = clamp((t - T_LETTERS + 250) / 700);
+        const letters = clamp((t - T_LETTERS + 250) / 900);
         if (letters > 0.5) nameRef.current?.classList.add('is-visible');
         if (letters > 0) {
           ctx.save();

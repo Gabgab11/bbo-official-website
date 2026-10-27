@@ -8,12 +8,8 @@
     <meta name="theme-color" content="#000000" />
     <meta name="color-scheme" content="dark light" />
     <script>
-      // Welcome screen: first visit in a session, unless the visitor prefers reduced motion.
-      try {
-        if (!sessionStorage.getItem('bbo-intro-seen') && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-          document.documentElement.classList.add('intro');
-        }
-      } catch (e) {}
+      // Welcome screen: plays on every visit, on every device.
+      document.documentElement.classList.add('intro');
     </script>
     <link rel="canonical" href="__SITE_URL__" />
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />

@@ -9,7 +9,7 @@ Built with React and Vite, hosted free on GitHub Pages, and deployed automatical
 
 | Section | What it does |
 | --- | --- |
-| Welcome | Music notes that gather into "BBO", once per visit (skippable) |
+| Welcome | Music notes that gather into "BBO" for about six seconds on every visit (skippable) |
 | Home | Full-screen hero with photos that crossfade every 10 seconds, the artist name, featured release (*Renewed Faith*), and Listen / Watch / Book buttons |
 | About | Biography, ministry story, a press quote (ThisDay, 2024) and key facts |
 | Music | *Renewed Faith* with a live Spotify player, streaming links and a list of releases with official store links |
@@ -59,7 +59,7 @@ Almost everything lives in `src/data/content.js`:
 - **Photos:** save two sizes of the photo in `public/media/` as `name-800.jpg` and `name-1600.jpg` (800 and 1600 pixels wide), then add `{ local: 'name', w, h, alt }` to `src/data/media-files.mjs`.
 - **Home page photos:** the hero crossfades between the photos in `heroSlides` (in `src/data/media-files.mjs`) every 10 seconds. Add or reorder entries there; `pos` / `posMobile` choose which part of the photo stays in view, and `mono: true` shows a colour photo in black and white.
 - **Gallery:** the slideshow plays the `gallery` list in order (6 seconds per photo; visitors can swipe, use the arrows, pause, or tap a photo to view it full screen).
-- **Welcome screen:** music notes gather into "BBO" on the first visit of each browser session (`src/components/Intro.jsx`). It is skipped for visitors who have reduced motion turned on; to switch it off entirely, delete `<Intro />` from `src/App.jsx`.
+- **Welcome screen:** music notes gather into "BBO" for about six seconds on every visit, on every device (`src/components/Intro.jsx`; timings are the `T_…` values at the top). Visitors can tap or press any key to skip; those with reduced motion turned on see the notes fade into place rather than fly in. To switch it off, delete `<Intro />` from `src/App.jsx`.
 
 Push to `main` and the site rebuilds in about two minutes.
 
