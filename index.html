@@ -9,12 +9,12 @@
     <meta name="color-scheme" content="dark light" />
     <script>
       // Welcome screen: plays on every visit, on every device (not on the team's admin pages).
-      if (location.hash.indexOf('#admin') !== 0) document.documentElement.classList.add('intro');
+      if (!/^\/admin(\/|$)/.test(location.pathname) && location.hash.indexOf('#admin') !== 0) document.documentElement.classList.add('intro');
     </script>
     <link rel="canonical" href="__SITE_URL__" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
-    <link rel="manifest" href="./site.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="BBO Official" />

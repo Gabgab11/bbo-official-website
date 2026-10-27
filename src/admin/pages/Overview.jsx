@@ -47,33 +47,33 @@ export default function Overview({ profile }) {
       {data && (
         <>
           <div className="a-stats">
-            <a className={`a-stat${data.newBookings ? ' a-stat--hot' : ''}`} href="#admin/bookings">
+            <a className={`a-stat${data.newBookings ? ' a-stat--hot' : ''}`} href="/admin/bookings">
               <span className="a-stat__num">{data.newBookings}</span>
               <span className="a-stat__label">New booking {data.newBookings === 1 ? 'request' : 'requests'}</span>
             </a>
-            <a className="a-stat" href="#admin/subscribers">
+            <a className="a-stat" href="/admin/subscribers">
               <span className="a-stat__num">{data.subscribers}</span>
               <span className="a-stat__label">Newsletter subscribers</span>
             </a>
-            <a className="a-stat" href="#admin/photos">
+            <a className="a-stat" href="/admin/photos">
               <span className="a-stat__num">{data.galleryPhotos}</span>
               <span className="a-stat__label">Photos in the gallery, {data.homePhotos} on the home page</span>
             </a>
-            <a className="a-stat" href="#admin/music">
+            <a className="a-stat" href="/admin/music">
               <span className="a-stat__num">{data.releases + data.videos}</span>
               <span className="a-stat__label">{data.releases} releases and {data.videos} videos</span>
             </a>
           </div>
 
           <div className="a-grid-2">
-            <Card title="Latest booking requests" actions={<a className="a-link" href="#admin/bookings">See all</a>}>
+            <Card title="Latest booking requests" actions={<a className="a-link" href="/admin/bookings">See all</a>}>
               {data.latest.length === 0 ? (
                 <p className="a-muted a-pad">No booking requests yet. They appear here as soon as someone sends the form on the website.</p>
               ) : (
                 <ul className="a-list">
                   {data.latest.map((b) => (
                     <li key={b.id}>
-                      <a className="a-list__row" href="#admin/bookings">
+                      <a className="a-list__row" href="/admin/bookings">
                         <div>
                           <strong>{b.first_name} {b.last_name}</strong>
                           <span className="a-muted">{b.event_type}{b.event_date ? ` · ${formatDate(b.event_date)}` : ''}{b.location ? ` · ${b.location}` : ''}</span>
@@ -91,14 +91,14 @@ export default function Overview({ profile }) {
 
             <Card title="Quick actions">
               <div className="a-actions">
-                <a className="a-action" href="#admin/photos"><Icon.upload /><span><strong>Add photos</strong>Upload to the gallery or home page</span></a>
-                <a className="a-action" href="#admin/text"><Icon.text /><span><strong>Edit site text</strong>Headline, About, featured release</span></a>
-                <a className="a-action" href="#admin/music"><Icon.play /><span><strong>Add a video or release</strong>Paste a YouTube or streaming link</span></a>
+                <a className="a-action" href="/admin/photos"><Icon.upload /><span><strong>Add photos</strong>Upload to the gallery or home page</span></a>
+                <a className="a-action" href="/admin/text"><Icon.text /><span><strong>Edit site text</strong>Headline, About, featured release</span></a>
+                <a className="a-action" href="/admin/music"><Icon.play /><span><strong>Add a video or release</strong>Paste a YouTube or streaming link</span></a>
                 <a className="a-action" href={siteUrl()} target="_blank" rel="noopener noreferrer"><Icon.external /><span><strong>View the website</strong>Opens in a new tab</span></a>
               </div>
               {data.binned > 0 && (
                 <p className="a-muted a-pad-x">
-                  <a className="a-link" href="#admin/deleted">{data.binned} {data.binned === 1 ? 'item' : 'items'} in Recently deleted</a>
+                  <a className="a-link" href="/admin/deleted">{data.binned} {data.binned === 1 ? 'item' : 'items'} in Recently deleted</a>
                 </p>
               )}
             </Card>

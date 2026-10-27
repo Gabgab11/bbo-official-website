@@ -21,7 +21,7 @@ Built with React and Vite, hosted free on GitHub Pages, and deployed automatical
 
 ## Admin panel (for BBO's team)
 
-**Address:** https://www.officialbbo.com/#admin. It is not linked from the website, and only invited team members can sign in.
+**Address:** https://www.officialbbo.com/admin (each section has its own address, e.g. `/admin/bookings`). It is not linked from the website, and only invited team members can sign in.
 
 What the team can do, from a phone or a computer:
 
@@ -48,10 +48,10 @@ What the team can do, from a phone or a computer:
 with c as (select translate(encode(extensions.gen_random_bytes(18), 'base64'), '+/=', '-_') as code),
      ins as (insert into public.admin_invites (code_hash, role, note) select private.hash_code(code), 'owner', 'Recovery' from c)
 select code from c;
--- Link: https://www.officialbbo.com/#admin/join/<code>
+-- Link: https://www.officialbbo.com/admin/join/<code>
 ```
 
-**How it works.** The website reads its text, photos, releases and videos from Supabase when it loads, and keeps the content it was built with as a fallback, so it still shows everything if Supabase is ever unreachable. Uploaded photos are stored in the `site-media` storage bucket. Database rules (Row Level Security, see `supabase/migrations/`) allow visitors to read published content and send forms, and nothing else; only signed-in team members can change content. The admin code is loaded only when someone opens `#admin`, so visitors never download it.
+**How it works.** The website reads its text, photos, releases and videos from Supabase when it loads, and keeps the content it was built with as a fallback, so it still shows everything if Supabase is ever unreachable. Uploaded photos are stored in the `site-media` storage bucket. Database rules (Row Level Security, see `supabase/migrations/`) allow visitors to read published content and send forms, and nothing else; only signed-in team members can change content. The admin code is loaded only when someone opens `/admin`, so visitors never download it. Older `#admin/…` links still work and move to `/admin/…`. GitHub Pages has no server-side routing, so the build copies the page into `admin/` and each section folder and uses it as `404.html` (see `vite.config.js`).
 
 **Recently deleted.** Removing anything sets a `deleted_at` date instead of erasing it. A nightly job (`bbo-purge-recently-deleted`, 02:17 UTC) erases items older than 30 days; uploaded photo files past 30 days are erased the next time a team member opens the admin panel.
 

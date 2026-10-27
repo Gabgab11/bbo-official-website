@@ -52,7 +52,7 @@ export default function Team({ profile }) {
     const res = await api.rpc('admin_create_invite', { p_role: invite.role, p_note: invite.note.trim() });
     setCreating(false);
     if (!res.ok) return toast(res.error, { error: true });
-    setShown({ link: `${siteUrl()}#admin/join/${res.data}`, title: 'Invite link ready', intro: 'You have been invited to manage BBO’s website. Create your account here:' });
+    setShown({ link: `${siteUrl()}admin/join/${res.data}`, title: 'Invite link ready', intro: 'You have been invited to manage BBO’s website. Create your account here:' });
     setInvite({ role: 'editor', note: '' });
     reload();
   };
@@ -60,7 +60,7 @@ export default function Team({ profile }) {
   const resetLink = async (m) => {
     const res = await api.rpc('admin_create_reset', { p_user: m.user_id });
     if (!res.ok) return toast(res.error, { error: true });
-    setShown({ link: `${siteUrl()}#admin/join/${res.data}`, title: `Password reset link for ${m.name || m.email}`, intro: 'Use this link to choose a new password for BBO’s website admin:' });
+    setShown({ link: `${siteUrl()}admin/join/${res.data}`, title: `Password reset link for ${m.name || m.email}`, intro: 'Use this link to choose a new password for BBO’s website admin:' });
   };
 
   const setRole = async (m, role) => {

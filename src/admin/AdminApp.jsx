@@ -30,7 +30,7 @@ const SECTIONS = [
 
 function Wordmark() {
   return (
-    <a className="a-wordmark" href="#admin">
+    <a className="a-wordmark" href="/admin">
       BBO <span>Admin</span>
     </a>
   );
@@ -45,7 +45,7 @@ function Shell({ profile, section, onSignOut }) {
   useEffect(() => { document.title = `${current.label} · BBO Admin`; }, [current]);
 
   const link = (s) => (
-    <a key={s.id} href={s.id ? `#admin/${s.id}` : '#admin'} className="a-nav__link" aria-current={s.id === current.id ? 'page' : undefined}>
+    <a key={s.id} href={s.id ? `/admin/${s.id}` : '/admin'} className="a-nav__link" aria-current={s.id === current.id ? 'page' : undefined}>
       <s.icon /> <span>{s.label}</span>
     </a>
   );
@@ -73,7 +73,7 @@ function Shell({ profile, section, onSignOut }) {
 
       <nav className="a-tabbar" aria-label="Admin">
         {SECTIONS.filter((s) => s.primary).map((s) => (
-          <a key={s.id} href={s.id ? `#admin/${s.id}` : '#admin'} aria-current={s.id === current.id ? 'page' : undefined}>
+          <a key={s.id} href={s.id ? `/admin/${s.id}` : '/admin'} aria-current={s.id === current.id ? 'page' : undefined}>
             <s.icon /><span>{s.label === 'Site text' ? 'Text' : s.label}</span>
           </a>
         ))}

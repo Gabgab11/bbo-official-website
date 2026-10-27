@@ -265,9 +265,16 @@ export function daysLeft(deletedAt) {
   return Math.max(0, Math.ceil((end - Date.now()) / 86400000));
 }
 
-export const navigate = (section) => { window.location.hash = section ? `#admin/${section}` : '#admin'; };
+/** Admin pages live at real addresses: /admin, /admin/bookings, /admin/join/<code>… */
+export const adminPath = (section) => (section ? `/admin/${section}` : '/admin');
 
-export const siteUrl = () => `${window.location.origin}${window.location.pathname}`;
+export const navigate = (section, { replace = false } = {}) => {
+  window.history[replace ? 'replaceState' : 'pushState'](null, '', adminPath(section));
+  window.dispatchEvent(new PopStateEvent('popstate'));
+};
+
+/** The public website's address (the domain root), e.g. https://www.officialbbo.com/ */
+export const siteUrl = () => `${window.location.origin}/`;
 
 /** Swaps an item with its neighbour and returns the updates to save. */
 export function reorder(list, index, delta, sortKey) {

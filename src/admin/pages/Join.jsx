@@ -51,7 +51,7 @@ export default function Join({ code, onDone }) {
       <>
         <h1>This link has expired</h1>
         <p className="a-muted">Invite links work once and expire after 7 days (password reset links after 2 days). Ask an owner on the team for a new one.</p>
-        <a className="a-btn a-btn--primary a-btn--block" href="#admin">Go to sign in</a>
+        <a className="a-btn a-btn--primary a-btn--block" href="/admin">Go to sign in</a>
       </>
     );
   } else {
