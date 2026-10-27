@@ -1,4 +1,7 @@
+import { useState } from 'react';
 import { featured, releases, streaming } from '../data/content.js';
+
+const MOBILE_LIMIT = 5;
 
 const External = ({ children }) => (
   <>
@@ -8,6 +11,7 @@ const External = ({ children }) => (
 );
 
 export default function Music() {
+  const [all, setAll] = useState(false);
   return (
     <section className="section on-light music" id="music" aria-labelledby="music-title">
       <div className="container">
@@ -50,9 +54,9 @@ export default function Music() {
               <External>Full catalogue on Spotify</External>
             </a>
           </div>
-          <ul className="release-list">
-            {releases.map((r) => (
-              <li className="release" key={r.title}>
+          <ul className={`release-list${all ? '' : ' is-collapsed'}`} id="release-list">
+            {releases.map((r, i) => (
+              <li className={`release${i >= MOBILE_LIMIT ? ' release--extra' : ''}`} key={r.title}>
                 <div className="release__title">
                   {r.title}
                   {r.credit && <small>{r.credit}</small>}
@@ -65,6 +69,9 @@ export default function Music() {
               </li>
             ))}
           </ul>
+          <button type="button" className="read-more read-more--releases" aria-expanded={all} aria-controls="release-list" onClick={() => setAll((v) => !v)}>
+            {all ? 'Show fewer releases' : `Show all ${releases.length} releases`}
+          </button>
         </div>
       </div>
     </section>

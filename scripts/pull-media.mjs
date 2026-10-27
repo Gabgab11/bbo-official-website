@@ -40,7 +40,7 @@ async function trimWhiteFrame(buf) {
 await mkdir(outDir, { recursive: true });
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8').catch(() => '{}'));
 const all = [...Object.values(photos), ...gallery];
-const unique = [...new Map(all.map((p) => [p.file, p])).values()];
+const unique = [...new Map(all.filter((p) => p.file).map((p) => [p.file, p])).values()];
 let ok = 0;
 let failed = 0;
 

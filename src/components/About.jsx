@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Photo from './Photo.jsx';
 import { photos } from '../data/media.js';
 
@@ -9,6 +10,7 @@ const facts = [
 ];
 
 export default function About() {
+  const [open, setOpen] = useState(false);
   return (
     <section className="section about" id="about" aria-labelledby="about-title">
       <div className="container about__grid">
@@ -25,6 +27,7 @@ export default function About() {
             with the textures of contemporary worship, and his ministrations are known for turning a room
             toward prayer.
           </p>
+          <div className={`about__more${open ? ' is-open' : ''}`} id="about-more">
           <p>
             Before music became his calling, BBO worked as a compère and actor. That changed in 2020. During
             the COVID-19 lockdown he gave himself to prayer and worship, and <em>Most High</em>, shared in that
@@ -57,6 +60,10 @@ export default function About() {
               </div>
             ))}
           </dl>
+          </div>
+          <button type="button" className="read-more" aria-expanded={open} aria-controls="about-more" onClick={() => setOpen((v) => !v)}>
+            {open ? 'Show less' : 'Read the full story'}
+          </button>
         </div>
       </div>
     </section>

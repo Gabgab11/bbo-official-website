@@ -9,11 +9,12 @@ Built with React and Vite, hosted free on GitHub Pages, and deployed automatical
 
 | Section | What it does |
 | --- | --- |
-| Home | Full-screen hero with the artist name, featured release (*Renewed Faith*), and Listen / Watch / Book buttons |
+| Welcome | Music notes that gather into "BBO", once per visit (skippable) |
+| Home | Full-screen hero with photos that crossfade every 10 seconds, the artist name, featured release (*Renewed Faith*), and Listen / Watch / Book buttons |
 | About | Biography, ministry story, a press quote (ThisDay, 2024) and key facts |
 | Music | *Renewed Faith* with a live Spotify player, streaming links and a list of releases with official store links |
 | Videos | A player with a playlist of 12 videos: the 9 from the old site plus 3 found on YouTube. Videos load only when played (privacy-enhanced `youtube-nocookie.com`) |
-| Gallery | 12 original photographs with a keyboard-accessible full-screen viewer |
+| Gallery | Slideshow of 15 photographs: gentle motion, swipe, arrows, pause and a full-screen viewer |
 | Booking | Event request form that saves to a Supabase database |
 | Newsletter | Email sign-up with consent, saved to the same database |
 | Footer | Navigation, streaming platforms, social profiles and booking link |
@@ -55,7 +56,10 @@ Almost everything lives in `src/data/content.js`:
 - **New release:** add an entry to `releases` (title, credit, kind, year, link). Use the official store or smart link.
 - **New video:** add `{ id: 'YOUTUBE_ID', title, credit }` to `videos`. The ID is the part after `watch?v=`.
 - **Featured release:** change `featured` (title, description, link).
-- **Photos:** add the file to `public/media/` and an entry to `src/data/media-files.mjs`, or upload to Wix media and run `npm run media:pull`.
+- **Photos:** save two sizes of the photo in `public/media/` as `name-800.jpg` and `name-1600.jpg` (800 and 1600 pixels wide), then add `{ local: 'name', w, h, alt }` to `src/data/media-files.mjs`.
+- **Home page photos:** the hero crossfades between the photos in `heroSlides` (in `src/data/media-files.mjs`) every 10 seconds. Add or reorder entries there; `pos` / `posMobile` choose which part of the photo stays in view, and `mono: true` shows a colour photo in black and white.
+- **Gallery:** the slideshow plays the `gallery` list in order (6 seconds per photo; visitors can swipe, use the arrows, pause, or tap a photo to view it full screen).
+- **Welcome screen:** music notes gather into "BBO" on the first visit of each browser session (`src/components/Intro.jsx`). It is skipped for visitors who have reduced motion turned on; to switch it off entirely, delete `<Intro />` from `src/App.jsx`.
 
 Push to `main` and the site rebuilds in about two minutes.
 

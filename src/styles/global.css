@@ -142,14 +142,15 @@ p:last-child { margin-bottom: 0; }
 
 .mobile-menu {
   position: fixed; inset: var(--header-h) 0 0; z-index: 49; background: var(--black);
-  padding: 2rem var(--gutter) 3rem; display: flex; flex-direction: column; justify-content: space-between;
+  padding: 1.5rem var(--gutter) 3rem; display: flex; flex-direction: column; justify-content: flex-start;
   overflow-y: auto; animation: menu-in 0.35s var(--ease);
 }
 .mobile-menu ul { list-style: none; margin: 0; padding: 0; }
 .mobile-menu li + li { border-top: 1px solid var(--line-dark); }
-.mobile-menu a.mobile-menu__link { display: block; padding: 1rem 0; font-family: var(--serif); font-size: 2.2rem; text-decoration: none; }
-.mobile-menu__foot { display: grid; gap: 1.25rem; margin-top: 2rem; }
-.mobile-menu__socials { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; color: var(--stone); }
+.mobile-menu a.mobile-menu__link { display: block; padding: 0.7rem 0; font-family: var(--serif); font-size: 1.6rem; text-decoration: none; }
+.mobile-menu__foot { display: grid; gap: 1.25rem; margin-top: 2.25rem; }
+.mobile-menu__socials { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; color: var(--stone); font-size: 0.92rem; }
+.mobile-menu__foot .btn { min-height: 46px; font-size: 0.95rem; }
 @keyframes menu-in { from { opacity: 0; transform: translateY(-8px); } }
 
 @media (max-width: 900px) {
@@ -161,8 +162,13 @@ p:last-child { margin-bottom: 0; }
    Hero — the one big moment: the name at the scale of the screen
    -------------------------------------------------------------------------- */
 .hero { position: relative; min-height: 100svh; display: flex; align-items: flex-end; overflow: hidden; isolation: isolate; }
-.hero__media { position: absolute; inset: 0 0 0 auto; width: min(58%, 900px); z-index: -2; }
-.hero__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; }
+.hero__media { position: absolute; inset: 0 0 0 auto; width: min(58%, 900px); z-index: -2; background: var(--black); overflow: hidden; }
+.hero__slide {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%;
+  opacity: 0; transition: opacity 1.8s ease-in-out;
+}
+.hero__slide.is-active { opacity: 1; }
+.hero__slide.is-mono { filter: grayscale(1) contrast(1.05); }
 .hero__media::after {
   content: ''; position: absolute; inset: 0;
   background:
@@ -171,7 +177,6 @@ p:last-child { margin-bottom: 0; }
     linear-gradient(180deg, rgb(0 0 0 / 0.6) 0%, rgb(0 0 0 / 0) 22%);
 }
 .hero__inner { position: relative; padding-top: calc(var(--header-h) + 3rem); padding-bottom: clamp(2rem, 5vw, 3.5rem); }
-.hero__role { color: var(--champagne); font-size: var(--step-0); margin-bottom: 0.5rem; }
 .hero__name {
   font-family: var(--serif); font-weight: 600; font-optical-sizing: auto;
   font-size: clamp(7.5rem, 30vw, 26rem); line-height: 0.78; letter-spacing: -0.035em;
@@ -188,25 +193,43 @@ p:last-child { margin-bottom: 0; }
 .hero__featured p { margin: 0; color: var(--stone); }
 .hero__featured strong { font-family: var(--serif); font-weight: 500; font-style: italic; font-size: var(--step-1); color: var(--ivory); margin-left: 0.4rem; }
 
-/* Orchestrated entrance: the image settles, the letters rise, the rest follows. */
+/* Which photo is showing: a thin line per photo, the current one fills over 10 seconds. */
+.hero__dots { position: absolute; right: var(--gutter); top: calc(var(--header-h) + 1.5rem); display: flex; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.hero__dots li { width: 22px; height: 2px; background: rgb(245 240 230 / 0.25); overflow: hidden; }
+.hero__dots li.is-active::after { content: ''; display: block; height: 100%; background: var(--champagne); transform-origin: left; animation: dot-fill 10s linear both; }
+@keyframes dot-fill { from { transform: scaleX(0); } }
+
+/* Orchestrated entrance: the image settles, the letters rise, the rest follows.
+   Each new photo then drifts very slowly while it is on screen. */
 @media (prefers-reduced-motion: no-preference) {
-  .hero__media img { animation: hero-image 2.4s var(--ease) both; }
+  .hero__media { animation: fade-only 2s var(--ease) both; }
+  .hero__slide.is-active { animation: drift 12s ease-out both; }
   .hero__name span { animation: letter-rise 1.2s var(--ease) both; }
   .hero__name span:nth-child(2) { animation-delay: 0.08s; }
   .hero__name span:nth-child(3) { animation-delay: 0.16s; }
   .hero__fade { animation: fade-in 1s var(--ease) 0.55s both; }
 }
-@keyframes hero-image { from { opacity: 0; transform: scale(1.06); } }
+/* Hold the entrance until the welcome screen lifts. */
+html.intro body { overflow: hidden; }
+html.intro .hero__media, html.intro .hero__name span, html.intro .hero__fade, html.intro .hero__dots li::after { animation-play-state: paused; }
+@keyframes fade-only { from { opacity: 0; } }
+@keyframes drift { from { transform: scale(1.08); } to { transform: scale(1); } }
 @keyframes letter-rise { from { opacity: 0; transform: translateY(0.25em); } }
 @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } }
 
 @media (max-width: 760px) {
-  .hero__media { width: 100%; }
+  /* On phones the photos fill the top of the screen and the name sits below the faces. */
+  .hero__media { inset: 0 0 auto 0; width: 100%; height: 74svh; }
   .hero__media::after {
-    background: linear-gradient(0deg, var(--black) 8%, rgb(0 0 0 / 0.65) 45%, rgb(0 0 0 / 0.2) 75%, rgb(0 0 0 / 0.55) 100%);
+    background: linear-gradient(0deg, var(--black) 2%, rgb(0 0 0 / 0.55) 30%, rgb(0 0 0 / 0) 60%, rgb(0 0 0 / 0.5) 100%);
   }
-  .hero__name { font-size: clamp(6.5rem, 38vw, 12rem); }
+  .hero__inner { padding-top: 46svh; }
+  .hero__name { font-size: clamp(5.5rem, 34vw, 10rem); }
+  .hero__fullname { font-size: 1.45rem; margin-top: 0.9rem; }
+  .hero__headline { font-size: 1.1rem; margin-bottom: 1.5rem; }
   .hero__actions .btn { flex: 1 1 auto; }
+  .hero__featured { margin-top: 2rem; }
+  .hero__dots { top: calc(var(--header-h) + 0.5rem); }
 }
 
 /* --------------------------------------------------------------------------
@@ -327,18 +350,46 @@ a.player__facade { display: block; }
    -------------------------------------------------------------------------- */
 .gallery { background: var(--ink); }
 .gallery__head { display: flex; justify-content: space-between; align-items: end; flex-wrap: wrap; gap: 1rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
-.gallery__grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(0.5rem, 1.2vw, 1rem); list-style: none; margin: 0; padding: 0; }
-.gallery__item { grid-column: span 4; }
-.gallery__item:nth-child(5n + 1) { grid-column: span 7; }
-.gallery__item:nth-child(5n + 2) { grid-column: span 5; }
-.gallery__item button { display: block; width: 100%; padding: 0; border: 0; background: var(--black); cursor: zoom-in; overflow: hidden; }
-.gallery__item img { width: 100%; height: clamp(220px, 26vw, 380px); object-fit: cover; transition: transform 0.9s var(--ease), opacity 0.4s; opacity: 0.92; }
-.gallery__item button:hover img, .gallery__item button:focus-visible img { transform: scale(1.03); opacity: 1; }
+
+/* Slideshow: one photo at a time, crossfading and drifting gently. Any shape of
+   photo fits: it sits whole on a softly blurred copy of itself. */
+.slideshow { position: relative; }
+.slideshow__stage {
+  position: relative; aspect-ratio: 16 / 9; max-height: 78svh; width: 100%;
+  overflow: hidden; background: var(--black); touch-action: pan-y; user-select: none; -webkit-user-select: none;
+}
+.slide { position: absolute; inset: 0; margin: 0; opacity: 0; transition: opacity 1.2s ease-in-out; }
+.slide.is-active { opacity: 1; }
+.slide__backdrop { position: absolute; inset: -6%; width: 112%; height: 112%; object-fit: cover; filter: blur(28px) brightness(0.45); }
+.slide__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; -webkit-user-drag: none; }
+.slideshow__zoom { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: transparent; cursor: zoom-in; }
+.slideshow__zoom:focus-visible { outline-offset: -4px; }
+@media (prefers-reduced-motion: no-preference) {
+  .slide.is-active .slide__img { animation: gentle-drift 7s ease-out both; }
+}
+@keyframes gentle-drift { from { transform: scale(1.06) translateX(-1%); } to { transform: scale(1) translateX(0); } }
+
+.slideshow__bar { display: flex; align-items: center; gap: 1.25rem; padding: 1rem 0; }
+.slideshow__count { font-family: var(--serif); font-size: var(--step-1); font-variant-numeric: lining-nums; min-width: 4.5ch; }
+.slideshow__count span { color: var(--stone); font-size: 0.85em; }
+.slideshow__progress { flex: 1; height: 1px; background: var(--line-dark); overflow: hidden; }
+.slideshow__progress span { display: block; height: 100%; background: var(--champagne); transform: scaleX(0); transform-origin: left; }
+.slideshow__progress span.is-filling { animation: dot-fill linear forwards; transform: scaleX(1); }
+.slideshow__controls { display: flex; gap: 0.5rem; }
+.slideshow__thumbs {
+  display: flex; gap: 0.5rem; margin: 0; padding: 0 0 0.25rem; list-style: none;
+  overflow-x: auto; scroll-snap-type: x proximity; scrollbar-width: none;
+}
+.slideshow__thumbs::-webkit-scrollbar { display: none; }
+.slideshow__thumbs li { flex: none; scroll-snap-align: center; }
+.slideshow__thumbs button { display: block; width: 96px; height: 64px; padding: 0; border: 0; background: var(--black); cursor: pointer; opacity: 0.45; transition: opacity 0.3s; }
+.slideshow__thumbs button:hover, .slideshow__thumbs button[aria-current='true'] { opacity: 1; }
+.slideshow__thumbs button[aria-current='true'] { box-shadow: 0 0 0 1px var(--champagne); }
+.slideshow__thumbs img { width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 760px) {
-  .gallery__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .gallery__item, .gallery__item:nth-child(5n + 1), .gallery__item:nth-child(5n + 2) { grid-column: span 1; }
-  .gallery__item:nth-child(3n + 1) { grid-column: span 2; }
-  .gallery__item img { height: clamp(150px, 44vw, 260px); }
+  .slideshow__stage { aspect-ratio: 1 / 1; max-height: 70svh; margin-inline: calc(-1 * var(--gutter)); width: calc(100% + 2 * var(--gutter)); }
+  .slideshow__thumbs { display: none; }
+  .slideshow__controls .icon-btn { width: 44px; height: 44px; }
 }
 
 .lightbox { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgb(0 0 0 / 0.96); color: var(--ivory); }
@@ -415,7 +466,8 @@ a.player__facade { display: block; }
 .footer__top { display: grid; grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr)); gap: 2.5rem; }
 .footer__brand .wordmark { font-size: clamp(3.5rem, 8vw, 6rem); line-height: 0.9; display: inline-block; }
 .footer__brand p { color: var(--stone); margin-top: 1rem; max-width: 30ch; }
-.footer__col h2 { font-family: var(--sans); font-size: 0.95rem; font-weight: 600; color: var(--champagne); margin-bottom: 1rem; letter-spacing: 0; }
+.footer__col summary { font-family: var(--sans); font-size: 0.95rem; font-weight: 600; color: var(--champagne); margin-bottom: 1rem; list-style: none; cursor: pointer; }
+.footer__col summary::-webkit-details-marker { display: none; }
 .footer__col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
 .footer__col a { text-decoration: none; color: rgb(245 240 230 / 0.85); }
 .footer__col a:hover { color: var(--champagne); }
@@ -429,3 +481,76 @@ a.player__facade { display: block; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+
+/* --------------------------------------------------------------------------
+   Shorter pages on phones: long sections fold away behind a button
+   -------------------------------------------------------------------------- */
+.read-more {
+  display: none; align-items: center; gap: 0.5rem; margin-top: 1.25rem; padding: 0.6rem 0;
+  background: none; border: 0; border-bottom: 1px solid currentColor; cursor: pointer;
+  font-weight: 500; color: var(--champagne);
+}
+.on-light .read-more { color: var(--gold-deep); }
+.read-more::after { content: ''; width: 0.5em; height: 0.5em; border-right: 1.5px solid; border-bottom: 1.5px solid; transform: translateY(-25%) rotate(45deg); transition: transform 0.25s; }
+.read-more[aria-expanded='true']::after { transform: translateY(15%) rotate(-135deg); }
+
+@media (max-width: 760px) {
+  :root { --section: 4rem; }
+  .section-title { font-size: clamp(2.3rem, 11vw, 3rem); }
+  .read-more { display: inline-flex; }
+
+  .about__more:not(.is-open) { display: none; }
+  .about__body .section-title { margin-bottom: 1.25rem; }
+  .about__body p { font-size: 1.05rem; line-height: 1.7; }
+  .about__portrait { max-width: 300px; }
+  .about__portrait figcaption { display: none; }
+
+  .release-list.is-collapsed .release--extra { display: none; }
+  .music__embed, .music__embed iframe { min-height: 352px; height: 352px; }
+  .music__title { margin-bottom: 1.25rem; }
+
+  /* Video list becomes a swipeable row instead of a tall column. */
+  .playlist { display: flex; gap: 0.75rem; overflow-x: auto; scroll-snap-type: x mandatory; border-top: 0; padding-bottom: 0.5rem; scrollbar-width: none; }
+  .playlist::-webkit-scrollbar { display: none; }
+  .playlist li, .playlist li:first-child { flex: 0 0 62%; border: 0; scroll-snap-align: start; }
+  .playlist button { grid-template-columns: 1fr; gap: 0.5rem; padding: 0; }
+  .playlist button:hover, .playlist button[aria-current='true'] { background: none; box-shadow: none; }
+  .playlist button[aria-current='true'] img { box-shadow: 0 0 0 2px var(--champagne); }
+  .playlist img { width: 100%; }
+
+  .booking__notes li:not(:last-child) { display: none; }
+  .booking__intro .lede { margin-bottom: 1rem; }
+
+  .footer__top { gap: 0; }
+  .footer__brand { margin-bottom: 1.5rem; }
+  .footer__col { border-top: 1px solid var(--line-dark); }
+  .footer__col summary { display: flex; justify-content: space-between; align-items: center; margin: 0; padding: 1rem 0; }
+  .footer__col summary::after { content: '+'; font-size: 1.3rem; font-weight: 400; color: var(--stone); }
+  .footer__col[open] summary::after { content: '–'; }
+  .footer__col ul { padding-bottom: 1.25rem; }
+}
+
+/* --------------------------------------------------------------------------
+   Welcome screen
+   -------------------------------------------------------------------------- */
+html.intro body::before { content: ''; position: fixed; inset: 0; z-index: 199; background: var(--black); }
+.intro {
+  position: fixed; inset: 0; z-index: 200; background: var(--black); cursor: pointer;
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.intro.is-leaving { opacity: 0; transform: translateY(-3%); pointer-events: none; }
+.intro__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.intro__name {
+  position: absolute; left: 0; right: 0; top: calc(50% + min(40vw, 34vh, 380px) * 0.36);
+  margin: 0; text-align: center; font-family: var(--serif); font-style: italic;
+  font-size: clamp(1.1rem, 2.6vw, 1.6rem); color: var(--champagne);
+  opacity: 0; animation: intro-name-in 0.9s var(--ease) 2.5s forwards;
+}
+@keyframes intro-name-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; }
+}
+.intro__skip {
+  position: absolute; right: var(--gutter); bottom: calc(1.5rem + env(safe-area-inset-bottom)); padding: 0.6rem 1rem;
+  background: none; border: 1px solid rgb(245 240 230 / 0.3); border-radius: 999px; color: var(--stone); font-size: 0.85rem; cursor: pointer;
+}
+.intro__skip:hover { color: var(--ivory); border-color: var(--ivory); }
