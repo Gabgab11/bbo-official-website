@@ -3,7 +3,7 @@
 The official website of **BBO (Bakare Boluwatife Oluwatobi)**, gospel music minister, worship leader and songwriter.
 Built with React and Vite, hosted free on GitHub Pages, and deployed automatically on every push to `main`. It replaces the Wix site at `gabriel6145.wixsite.com/thebbobrand`.
 
-**Live site:** https://gabgab11.github.io/bbo-official-website/
+**Live site:** https://www.officialbbo.com/
 
 ## What's on the site
 
@@ -21,7 +21,7 @@ Built with React and Vite, hosted free on GitHub Pages, and deployed automatical
 
 ## Admin panel (for BBO's team)
 
-**Address:** https://gabgab11.github.io/bbo-official-website/#admin. It is not linked from the website, and only invited team members can sign in.
+**Address:** https://www.officialbbo.com/#admin. It is not linked from the website, and only invited team members can sign in.
 
 What the team can do, from a phone or a computer:
 
@@ -48,7 +48,7 @@ What the team can do, from a phone or a computer:
 with c as (select translate(encode(extensions.gen_random_bytes(18), 'base64'), '+/=', '-_') as code),
      ins as (insert into public.admin_invites (code_hash, role, note) select private.hash_code(code), 'owner', 'Recovery' from c)
 select code from c;
--- Link: https://gabgab11.github.io/bbo-official-website/#admin/join/<code>
+-- Link: https://www.officialbbo.com/#admin/join/<code>
 ```
 
 **How it works.** The website reads its text, photos, releases and videos from Supabase when it loads, and keeps the content it was built with as a fallback, so it still shows everything if Supabase is ever unreachable. Uploaded photos are stored in the `site-media` storage bucket. Database rules (Row Level Security, see `supabase/migrations/`) allow visitors to read published content and send forms, and nothing else; only signed-in team members can change content. The admin code is loaded only when someone opens `#admin`, so visitors never download it.
@@ -145,13 +145,24 @@ git push
 
 Vite uses a relative base path (`./`). Because the site is a single page that navigates with `#anchors`, the same build works at `/bbo-official-website/` on GitHub Pages and at the root of a custom domain, with no routing changes. Unknown URLs get a `404.html` that sends visitors to the homepage. `robots.txt` and `sitemap.xml` are generated at build time with the correct site address.
 
-## Using a custom domain (for example officialbbo.com)
+## Domain and email (officialbbo.com)
 
-1. Create `public/CNAME` containing just the domain, e.g. `officialbbo.com`, and push.
-2. At your domain registrar, add DNS records for GitHub Pages: four `A` records for the apex (`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`) and a `CNAME` record for `www` pointing to `gabgab11.github.io`. Check GitHub's current guidance: https://docs.github.com/pages/configuring-a-custom-domain-for-your-github-pages-site
-3. In **Settings → Pages**, enter the domain and tick **Enforce HTTPS** once the certificate is issued.
+The site is served at **https://www.officialbbo.com/** (`public/CNAME`); `officialbbo.com` and the old `gabgab11.github.io/bbo-official-website/` address redirect there. Old links that include a `#section`, such as admin invite links, still land in the right place.
 
-The workflow detects `public/CNAME` and switches canonical, Open Graph and sitemap URLs to the custom domain automatically.
+The domain is registered at **Namecheap** and uses Namecheap BasicDNS. Email is **Zoho Mail**. Records (Domain List → officialbbo.com → Advanced DNS):
+
+| Type | Host | Value | Purpose |
+| --- | --- | --- | --- |
+| A | `@` | `185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153` (four records) | Website (GitHub Pages) |
+| CNAME | `www` | `gabgab11.github.io.` | Website (GitHub Pages) |
+| MX (Mail settings → Custom MX) | `@` | `mx.zoho.com` 10, `mx2.zoho.com` 20, `mx3.zoho.com` 50 | Zoho Mail delivery |
+| TXT | `@` | `v=spf1 include:zohomail.com ~all` | SPF |
+| TXT | `_dmarc` | `v=DMARC1; p=none; rua=mailto:info@officialbbo.com` | DMARC |
+| TXT | `bbo._domainkey` | Public key from Zoho Mail Admin → Domains → officialbbo.com → Email configuration → DKIM | DKIM |
+
+In GitHub **Settings → Pages**, the custom domain is `www.officialbbo.com` with **Enforce HTTPS** on. GitHub's guide: https://docs.github.com/pages/configuring-a-custom-domain-for-your-github-pages-site
+
+The workflow reads `public/CNAME` and uses that address for canonical, Open Graph and sitemap URLs.
 
 ## Content sources
 
