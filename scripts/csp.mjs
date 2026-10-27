@@ -11,11 +11,11 @@ export function withSecurityHeaders(html, supabaseUrl = '') {
 
   const csp = [
     "default-src 'self'",
-    `script-src 'self' ${hashes.join(' ')}`.trim(),
+    `script-src 'self' https://www.googletagmanager.com ${hashes.join(' ')}`.trim(),
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
-    `img-src 'self' data: blob: https://static.wixstatic.com https://i.ytimg.com ${supabase}`.trim(),
-    `connect-src 'self' ${supabase}`.trim(),
+    `img-src 'self' data: blob: https://static.wixstatic.com https://i.ytimg.com https://*.google-analytics.com https://www.googletagmanager.com ${supabase}`.trim(),
+    `connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com ${supabase}`.trim(),
     'frame-src https://www.youtube-nocookie.com https://open.spotify.com',
     "media-src 'self'",
     "worker-src 'none'",

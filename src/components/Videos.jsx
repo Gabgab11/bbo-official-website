@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { youtubeChannel } from '../data/content.js';
 import { useSiteContent } from '../lib/siteContent.jsx';
 import { PlayIcon } from './Icons.jsx';
+import { track } from '../lib/analytics.js';
 
 const thumb = (id, q = 'hqdefault') => `https://i.ytimg.com/vi/${id}/${q}.jpg`;
 
@@ -14,6 +15,7 @@ export default function Videos() {
   const choose = (i) => {
     setIndex(i);
     setPlaying(videos[i].embed !== false);
+    if (videos[i].embed !== false) track('video_play', { video_title: videos[i].title });
     document.getElementById('player')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   };
 
@@ -49,7 +51,7 @@ export default function Videos() {
                   allowFullScreen
                 />
               ) : (
-                <button type="button" className="player__facade" onClick={() => setPlaying(true)}>
+                <button type="button" className="player__facade" onClick={() => { setPlaying(true); track('video_play', { video_title: video.title }); }}>
                   <img src={thumb(video.id)} alt="" width="480" height="360" loading="lazy" decoding="async" />
                   <span className="player__play"><PlayIcon /></span>
                   <span className="visually-hidden">Play {video.title}</span>

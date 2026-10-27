@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { EMAIL_RE, formsConfigured, subscribe } from '../lib/forms.js';
+import { track } from '../lib/analytics.js';
 import { useSiteContent } from '../lib/siteContent.jsx';
 
 export default function Newsletter() {
@@ -18,6 +19,7 @@ export default function Newsletter() {
     setState({ status: 'sending', message: '', field: null });
     const result = await subscribe(value);
     if (result.ok) {
+      track('sign_up', { method: 'newsletter' });
       setEmail('');
       setConsent(false);
       return setState({ status: 'success', message: 'You’re subscribed. News of new music and events will come to your inbox.' });

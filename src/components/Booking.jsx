@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { eventTypes, socials } from '../data/content.js';
 import { EMAIL_RE, formsConfigured, submitBooking } from '../lib/forms.js';
+import { track } from '../lib/analytics.js';
 import { useSiteContent } from '../lib/siteContent.jsx';
 
 const empty = { first_name: '', last_name: '', email: '', phone: '', event_type: '', event_date: '', location: '', details: '', website: '' };
@@ -67,6 +68,7 @@ export default function Booking() {
     };
     const result = await submitBooking(row);
     if (result.ok) {
+      track('generate_lead', { form: 'booking', event_type: row.event_type });
       setStatus('success');
       setValues(empty);
     } else {

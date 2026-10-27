@@ -474,6 +474,30 @@ a.player__facade { display: block; }
 .footer__col small { color: var(--stone); margin-left: 0.35rem; }
 .footer__bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-top: clamp(3rem, 6vw, 5rem); padding-top: 1.5rem; border-top: 1px solid var(--line-dark); color: var(--stone); font-size: 0.9rem; }
 .footer__bottom a { color: var(--stone); }
+.footer__links { display: inline-flex; gap: 1.5rem; flex-wrap: wrap; }
+.footer__linkbtn { background: none; border: 0; padding: 0; font: inherit; color: var(--stone); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+.footer__linkbtn:hover { color: var(--ivory); }
+
+/* Cookie notice */
+.cookie {
+  position: fixed; z-index: 60; left: 50%; bottom: max(1rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%); width: min(40rem, calc(100% - 2rem));
+  display: flex; align-items: center; gap: 1rem 1.5rem; flex-wrap: wrap;
+  padding: 1rem 1.25rem; background: rgb(21 18 14 / 0.96); color: var(--ivory);
+  border: 1px solid var(--line-dark); border-radius: 14px; box-shadow: 0 18px 50px rgb(0 0 0 / 0.45);
+  backdrop-filter: blur(8px); font-size: 0.9rem; line-height: 1.5;
+  animation: cookie-in 0.6s var(--ease) both; animation-delay: 0.4s;
+}
+.cookie p { margin: 0; flex: 1 1 18rem; color: var(--stone); }
+.cookie__actions { display: flex; gap: 0.6rem; flex: 0 0 auto; }
+.cookie__btn { font: inherit; font-weight: 600; padding: 0.6rem 1.1rem; border-radius: 999px; cursor: pointer; border: 1px solid var(--line-dark); background: transparent; color: var(--ivory); }
+.cookie__btn:hover { border-color: var(--stone); }
+.cookie__btn--accept { background: var(--champagne); border-color: var(--champagne); color: var(--black); }
+.cookie__btn--accept:hover { background: var(--champagne-soft); border-color: var(--champagne-soft); }
+.cookie__btn:focus-visible { outline: 2px solid var(--champagne); outline-offset: 2px; }
+html.intro .cookie { visibility: hidden; }
+@keyframes cookie-in { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@media (max-width: 520px) { .cookie__actions { width: 100%; } .cookie__btn { flex: 1; } }
 @media (max-width: 900px) { .footer__top { grid-template-columns: repeat(2, minmax(0, 1fr)); } .footer__brand { grid-column: 1 / -1; } }
 @media (max-width: 460px) { .footer__top { grid-template-columns: 1fr; } }
 

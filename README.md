@@ -126,9 +126,17 @@ If these are missing the site still builds, and the forms show a clear "temporar
 
 **Security hardening.**
 - **Form limits.** The database limits the forms (`supabase/migrations/20261027170000_security_hardening.sql`): at most 3 booking requests per email address per day, at most 20 from everyone per 10 minutes, and at most 60 newsletter sign-ups per 10 minutes.
-- **Strict page rules.** Every page carries a Content-Security-Policy (`scripts/csp.mjs`): only the site's own scripts run, and connections are only allowed to Supabase. Images, fonts and embeds may come only from the hosts the site uses.
+- **Strict page rules.** Every page carries a Content-Security-Policy (`scripts/csp.mjs`): only the site's own scripts run, and connections are only allowed to Supabase and Google Analytics. Images, fonts and embeds may come only from the hosts the site uses.
 - **No framing, no source maps.** The site refuses to be shown inside another site's frame, and the build publishes no source maps.
 - **Accounts.** Public sign-up is turned off in Supabase Auth; team accounts are created only through invite links.
+
+## Google Analytics
+
+The public site sends visits to Google Analytics 4. The property is "BBO Official Website", the web stream is "BBO website" and the measurement ID is `G-JBFZMBD76W` (`src/lib/analytics.js`). The admin panel never loads it.
+
+- **Cookies.** A small notice asks visitors to accept or decline. Until they accept, Google's consent mode keeps Analytics cookie-free and sends only anonymous pings. Visitors can change their choice later with "Cookie settings" in the footer. Advertising features and Google signals are off.
+- **Events.** Besides page views, scrolls and outbound clicks (Google's enhanced measurement), the site records `generate_lead` (booking request sent, with the event type), `sign_up` (newsletter) and `video_play` (with the video title). No names, emails or phone numbers are ever sent.
+- **Key events.** To count bookings as key events, open Google Analytics → Admin → Key events and mark `generate_lead` (and `sign_up` if wanted).
 
 ## Photos
 

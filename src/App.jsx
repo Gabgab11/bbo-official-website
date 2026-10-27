@@ -9,7 +9,9 @@ import Gallery from './components/Gallery.jsx';
 import Booking from './components/Booking.jsx';
 import Newsletter from './components/Newsletter.jsx';
 import Footer from './components/Footer.jsx';
+import CookieNotice from './components/CookieNotice.jsx';
 import { SiteContentProvider } from './lib/siteContent.jsx';
+import { startAnalytics } from './lib/analytics.js';
 
 // The admin panel lives at /admin and is loaded only when someone opens it,
 // so visitors never download it.
@@ -56,6 +58,12 @@ function usePath() {
   return path;
 }
 
+/** Starts Google Analytics on the public site only. */
+function PublicAnalytics() {
+  useEffect(() => { startAnalytics(); }, []);
+  return null;
+}
+
 export default function App() {
   const path = usePath();
 
@@ -83,6 +91,8 @@ export default function App() {
         <Newsletter />
       </main>
       <Footer />
+      <PublicAnalytics />
+      <CookieNotice />
     </SiteContentProvider>
   );
 }

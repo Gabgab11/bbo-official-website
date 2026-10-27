@@ -39,7 +39,10 @@ export default function Footer() {
         </div>
         <div className="footer__bottom">
           <span>© {new Date().getFullYear()} BBO. All rights reserved.</span>
-          <a href="#top">Back to top</a>
+          <span className="footer__links">
+            <button type="button" className="footer__linkbtn" onClick={() => window.dispatchEvent(new Event('bbo-cookie-settings'))}>Cookie settings</button>
+            <a href="#top">Back to top</a>
+          </span>
         </div>
       </div>
     </footer>
